@@ -7,12 +7,44 @@
             const client = require("./mqtt");
             const _db = require('./mirror_db');
 
+            let signUpBtnFlag = false;
+
+            let btn;
+            let btnText="";
+
+            client.subscribe('error'); // face not found
+            client.on('message', (topic, message, packet) =>{
+                if(topic == "error"){
+                    console.log("error");
+                    var msg = String(message);
+                    
+                    const warningText = "Face Not Found";
+
+                    if(signUpBtnFlag){
+                        btn = document.getElementById("signUpBtn");
+                        btnText = "Sign Up";
+                        signUpBtnFlag = false;
+                    }
+
+                    if(msg == "notFound"){
+                        btn.textContent  = warningText;
+                        btn.setAttribute("style", "color: red; border: solid 3px red; box-shadow: 0 0 25px red;");
+                    }
+                    else {
+                        btn.textContent = btnText;
+                        btn.setAttribute("style", "color: white; border: solid 2px white;");
+                    }
+                }
+            })
+
+
             //회원가입에 필요한 사진 찍기
              function takePicture(){
                 const userName = document.getElementById('name').value;
                 _db.addUser(userName)
                 .then(value => {
                     loading();
+                    signUpBtnFlag = true;
                     id = value;
                     client.publish('createAccountCamera',String(id));
                 })
@@ -33,7 +65,7 @@
                 <input type="input" class="form__field" placeholder="Name" name="name" id='name' required /><label for="name" class="form__label">Name</label>
             </div>
             <button id="signUpBtn" onclick="takePicture()">Sign Up</button>
-            <button id="homeBtm" onclick="returnToHome()">Home</button>
+            <button id="homeBtn" onclick="returnToHome()">Home</button>
         </div>
     </body>
 </html>

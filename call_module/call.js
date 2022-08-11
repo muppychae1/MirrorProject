@@ -11,6 +11,7 @@ const calleeInput = document.getElementById("callee-id-input");
 const submitToken = document.getElementById("token-submit");
 const callButton = document.getElementById("call-button");
 const hangUpButton = document.getElementById("hang-up-button");
+const acceptCallButton = document.getElementById('accept-call-Button');
 
 /* 클라이언트 인증 */
 submitToken.addEventListener("click", async () => {
@@ -33,10 +34,9 @@ callButton.addEventListener("click", () => {
 
     // To call an Azure Communication Services communication user, use {communicationUserId: 'ACS_USER_ID'}.
     // To call echo bot, use {id: '8:echo123'}.
-    call = callAgent.startCall(
-        [{ communicationUserId: userToCall }],
-        {}
-    );
+    call = callAgent.startCall([{ communicationUserId: userToCall }], {  });
+    // Subscribe to the call's properties and events.
+    subscribeToCall(call);
     // toggle button states
     hangUpButton.disabled = false;
     callButton.disabled = true;
@@ -52,3 +52,49 @@ hangUpButton.addEventListener("click", () => {
     callButton.disabled = false;
     submitToken.disabled = false;
 });
+
+
+// Subscribe to a call obj.
+// Listen for property changes and collection udpates.
+const subscribeToCall = (call) => {
+    try {
+        // Inspect the initial call.id value.
+        console.log(`Call Id: ${call.id}`);
+        //Subsribe to call's 'idChanged' event for value changes.
+        call.on('idChanged', () => {
+            console.log(`Call Id changed: ${call.id}`); 
+        });
+
+        // Inspect the initial call.state value.
+        console.log(`Call state: ${call.state}`);
+        // Subscribe to call's 'stateChanged' event for value changes.
+        call.on('stateChanged', async () => {
+            console.log(`Call state changed: ${call.state}`);
+            if(call.state === 'Connected') {
+                callButton.disabled = false;
+                acceptCallButton.disabled = true;
+            } else if (call.state === 'Disconnected') {
+                callButton.disabled = false;
+                hangUpButton.disabled = false;
+                console.log(`Call ended, call end reason={code=${call.callEndReason.code}, subCode=${call.callEndReason.subCode}}`);
+            }   
+        });
+
+        call.localVideoStreams.forEach(async (lvs) => {
+            localVideoStream = lvs;
+            //await displayLocalVideoStream();
+        });
+        call.on('localVideoStreamsUpdated', e => {
+            e.added.forEach(async (lvs) => {
+                localVideoStream = lvs;
+                //await displayLocalVideoStream();
+            });
+            e.removed.forEach(lvs => {
+               removeLocalVideoStream();
+            });
+        });
+        
+    } catch (error) {
+        console.error(error);
+    }
+}

@@ -14,6 +14,7 @@ login_flag = False
 loginCamera_flag = False
 createAccountCamera_flag = False
 exist_flag = False
+delete_login_flag = False
 
 user_id = 0
 def on_connect(client, userdata, flag, rc):
@@ -21,25 +22,36 @@ def on_connect(client, userdata, flag, rc):
     client.subscribe('loginCamera')
     client.subscribe('createAccountCamera')
     client.subscribe('existingUser')
+    client.subscribe('closeCamera')
+    client.subscribe('delete/camera')
 
 def on_message(client, userdata, msg):
     message = msg.payload.decode("utf-8")
     print("payload : " + str(message))
 
-    if(msg.topic == 'loginCamera'):
+    if(msg.topic == 'closeCamera'):
+        crop.closeCam()
+    #삭제 버튼 누른 유저가 삭제할 수 있는지 얼굴인식 서버에게
+    #로그인 해서 id 가져오기
+    elif(msg.topic =='delete/camera'):
+        client.publish('delete/login', 'ok')
+        global delete_login_flag
+        delete_login_flag = True
+
+    elif(msg.topic == 'loginCamera'):
         print("topic : " + msg.topic)
         if(str(message) == 'login'):
             global loginCamera_flag
             loginCamera_flag = True
             
-    if(msg.topic == 'createAccountCamera'):
+    elif(msg.topic == 'createAccountCamera'):
         print("topic : " + msg.topic)
         global user_id
         user_id = str(message)
         global createAccountCamera_flag
         createAccountCamera_flag = True
 
-    if(msg.topic == 'existingUser'):
+    elif(msg.topic == 'existingUser'):
         client.publish('exist', 'ok')
         global exist_flag
         exist_flag = True
@@ -117,6 +129,19 @@ while True :
             imageByte = imagelist.pop()
             client.publish('login', imageByte)
         exist_flag = False
+    
+    if(delete_login_flag):
+        print('삭제버튼을 누른유저가 삭제권한이 있는지 확인')
+        # 카메라로 사진 찍어서 얼굴부분만 크롭해서 저장
+        dir_name1 = os.path.join('face','login')
+        dir_name2 = os.path.join('face','login','user')
+        createCropImage('user',  dir_name1, 10)
+        # 사진 넘겨주기
+        imagelist = load_image(dir_name2)
+        for i in range(10) :
+            imageByte = imagelist.pop()
+            client.publish('login', imageByte)
+        delete_login_flag = False
 
     if (loginCamera_flag):
         Camera_login(10)
