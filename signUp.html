@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <link href="css/signUp.css" rel="stylesheet">
+        <link href="css/loading.css" rel="stylesheet">
+        <script src="loading.js"></script>
+        <script>
+            const client = require("./mqtt");
+            const _db = require('./mirror_db');
+
+            //회원가입에 필요한 사진 찍기
+             function takePicture(){
+                const userName = document.getElementById('name').value;
+                _db.addUser(userName)
+                .then(value => {
+                    loading();
+                    id = value;
+                    client.publish('createAccountCamera',String(id));
+                })
+            }
+
+            function returnToHome(){
+                document.location.href="init.html";
+            }
+
+        </script>
+    </head>
+    <body>
+        <div id="loadingDiv">
+            <div id="loading" style="display: none;"></div>
+        </div>
+        <div id="container">
+            <div class="form__group field">
+                <input type="input" class="form__field" placeholder="Name" name="name" id='name' required /><label for="name" class="form__label">Name</label>
+            </div>
+            <button id="signUpBtn" onclick="takePicture()">Sign Up</button>
+            <button id="homeBtm" onclick="returnToHome()">Home</button>
+        </div>
+    </body>
+</html>

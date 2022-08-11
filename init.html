@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Login & Sign up</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="css/init.css">
+        <link rel="stylesheet" type="text/css" href="css/loading.css">
+        <script src="loading.js"></script>
+        <script>   
+            const client = require("./mqtt")
+            var loginFlag = false
+
+            // 로그인 start
+            function login(){
+                console.log("login()");
+                loading();
+                loginFlag = true;
+                client.publish('loginCamera',"login");
+            }
+
+            // 회원가입 start
+            function signUp(){
+                console.log('signUp()');
+                loading();
+                client.publish('existingUser', 'ok')
+            }
+
+            //재학습 시키기
+            function model(){
+                client.publish('reTrain', '')
+            }
+        </script>
+    </head>
+    <body>
+        <div id="loadingDiv">
+            <div id="loading" style="display: none;"></div>
+        </div>
+        <div class="container">
+            <div class="btnDiv" id="loginDiv"><button class="btn" id="loginBtn" onclick="login()">Login</button></div>
+            <div class="btnDiv" id="signUpDiv"><button class="btn" id="signUpBtn" onclick="signUp()">Sign Up</button></div>
+            <div class="btnDiv" id="modelDiv"><button class="btn" id="modelBtn" onclick="model()">Train</button></div>
+        </div>
+        <div id="message"></div>
+    </body>
+</html>
