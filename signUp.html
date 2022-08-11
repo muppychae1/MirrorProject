@@ -9,37 +9,34 @@
 
             let signUpBtnFlag = false;
 
-            let btn;
+            let btn; // 눌린 버튼 정보 저장
             let btnText="";
 
-            client.subscribe('error'); // face not found
+            client.subscribe('error'); // face not found를 위한 토픽 : "error"
             client.on('message', (topic, message, packet) =>{
                 if(topic == "error"){
-                    console.log("error");
                     var msg = String(message);
-                    
                     const warningText = "Face Not Found";
 
-                    if(signUpBtnFlag){
+                    if(signUpBtnFlag){ // Sign Up 버튼을 눌렀는데 얼굴이 안 보일 경우
                         btn = document.getElementById("signUpBtn");
                         btnText = "Sign Up";
                         signUpBtnFlag = false;
                     }
 
-                    if(msg == "notFound"){
+                    if(msg == "notFound"){ // 그 버튼에 Error 문구 띄우기
                         btn.textContent  = warningText;
                         btn.setAttribute("style", "color: red; border: solid 3px red; box-shadow: 0 0 25px red;");
                     }
-                    else {
+                    else { // 얼굴을 찾았을 경우 버튼 복구
                         btn.textContent = btnText;
                         btn.setAttribute("style", "color: white; border: solid 2px white;");
                     }
                 }
-            })
+            });
 
-
-            //회원가입에 필요한 사진 찍기
-             function takePicture(){
+            // Sign Up 버튼 눌렀을 때 사진 찍고 학습하기
+            function singUp(){
                 const userName = document.getElementById('name').value;
                 _db.addUser(userName)
                 .then(value => {
@@ -47,11 +44,12 @@
                     signUpBtnFlag = true;
                     id = value;
                     client.publish('createAccountCamera',String(id));
-                })
+                });
             }
 
+            // init로 돌아가기
             function returnToHome(){
-                document.location.href="init.html";
+                window.history.back();
             }
 
         </script>
@@ -62,9 +60,10 @@
         </div>
         <div id="container">
             <div class="form__group field">
-                <input type="input" class="form__field" placeholder="Name" name="name" id='name' required /><label for="name" class="form__label">Name</label>
+                <input type="input" class="form__field" placeholder="Name" name="name" id='name' required />
+                <label for="name" class="form__label">Name</label>
             </div>
-            <button id="signUpBtn" onclick="takePicture()">Sign Up</button>
+            <button id="signUpBtn" onclick="singUp()">Sign Up</button>
             <button id="homeBtn" onclick="returnToHome()">Home</button>
         </div>
     </body>

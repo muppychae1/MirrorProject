@@ -110,9 +110,8 @@ def on_message(client, userdata, msg):
         
         
 
-broker_ip = '223.194.152.44' # 현재 이 컴퓨터를 브로커로 설정
-
-# broker_ip = 'localhost'
+# broker_ip = '223.194.152.44' # 현재 이 컴퓨터를 브로커로 설정
+broker_ip = 'localhost'
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message

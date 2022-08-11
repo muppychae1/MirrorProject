@@ -18,8 +18,9 @@ function createWindow() {
 
     //win.webContents.openDevTools();  
     // win.loadFile("./call_module/call.html");
-    win.loadFile("init.html");
-    // win.loadFile("signUp.html");
+    // win.loadFile("init.html");
+    // win.loadFile("sign1Up.html");
+    win.loadFile("delete.html");
 }
 
 app.whenReady().then(() => {

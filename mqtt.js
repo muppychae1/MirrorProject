@@ -12,7 +12,6 @@ client.subscribe("loginCheck");
 client.subscribe('createAccount/check');
 client.subscribe('exist/check');
 client.subscribe('reTrain/check');
-// client.subscribe('error'); // face not found
 
 client.on('message', (topic, message, packet) => {
   console.log("message is "+ message);
