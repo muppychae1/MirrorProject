@@ -15,7 +15,11 @@
     "@electron/remote": "^2.0.8",
     "electron": "^19.0.9",
     "mqtt": "^4.3.7",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "node-record-lpcm16": "^1.0.1",
+    "request": "^2.88.2",
+    "require": "^2.4.20",
+    "sox": "^0.1.0"
   },
   "devDependencies": {
     "parcel": "^2.7.0"

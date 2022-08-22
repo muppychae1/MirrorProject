@@ -259,22 +259,22 @@ createLocalVideoStream = async () => {
 
 // Display your local video stream preview in your UI
 displayLocalVideoStream = async () => {
-    // try {
-    //     localVideoStreamRenderer = new VideoStreamRenderer(localVideoStream);
-    //     const view = await localVideoStreamRenderer.createView();
-    //     localVideoContainer.hidden = false;
-    //     localVideoContainer.appendChild(view.target);
-    // } catch (error) {
-    //     console.error(error);
-    // } 
+    try {
+        localVideoStreamRenderer = new VideoStreamRenderer(localVideoStream);
+        const view = await localVideoStreamRenderer.createView();
+        localVideoContainer.hidden = false;
+        localVideoContainer.appendChild(view.target);
+    } catch (error) {
+        console.error(error);
+    } 
 }
 
 // Remove your local video stream preview from your UI
 removeLocalVideoStream = async() => {
-    // try {
-    //     localVideoStreamRenderer.dispose();
-    //     localVideoContainer.hidden = true;
-    // } catch (error) {
-    //     console.error(error);
-    // } 
+    try {
+        localVideoStreamRenderer.dispose();
+        localVideoContainer.hidden = true;
+    } catch (error) {
+        console.error(error);
+    } 
 }

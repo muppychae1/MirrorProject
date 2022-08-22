@@ -3,28 +3,25 @@
         <link href="css/delete.css" rel="stylesheet">
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
         <script>
-            function returnToLogin(){
-                window.history.back();
-            }
+            let _db = require('./mirror_db');
+            let _delete = require('./delete');
 
-            let _db = require('./mirror_db')
-            let _delete = require('./delete')
-            let deleteName = null
-            let ids = new Array()
-            let names = new Array()
+            let deleteName = null;
+            let userIdArray = new Array();
+            let names = new Array();
+
             window.onload = getUserInfo();
             
             function getUserInfo(){
                 _db.select('*', 'user', 'user_id is not null')
                 .then(users =>{
                     users.forEach(user => {
-                        console.log('user_id : ' + user.user_id)
-                        ids.push(user.user_id)
-                        names.push(user.name)
-                        
+                        // console.log('user_id : ' + user.user_id);
+                        userIdArray.push(user.user_id);
+                        names.push(user.name);
                     });
-                    createTable(ids, names)
-                })
+                    createTable(iuserIdArrayds, names);
+                });
             }
         
             function HighLightTR(target) {
@@ -41,7 +38,7 @@
                     }
                 } // endfor i
             }
-            function createTable(ids, names){
+            function createTable(userIdArray, names){
                 const hTbody = document.getElementById('htmlTbody');
                 hTbody.innerHTML =''
                 names.forEach(name =>{
@@ -62,14 +59,13 @@
             function deleteUser(){
                 if(deleteName != null){
                     index = names.indexOf(deleteName, 0)
-                    id = ids[index]
+                    id = userIdArray[index]
                     
-
                     //삭제하기
                     _delete.deleteClick(id)
                 }
             }
-        function rowEvent(){
+            function rowEvent(){
              // 테이블의 Row 클릭시 값 가져오기
             $("#table-1 tr").mousedown(function(){    
 
@@ -86,20 +82,28 @@
                 console.log('change deleteName : '+ deleteName)
 
             });
-            
+
+            // Home으로 돌아가기
+            function returnToHome(){
+                window.history.back();
+            }
         }
         </script>
     </head>
     <body>
         <title>Delete</title>
-        <div class="container">
-            <table>
-                <thead><tr><th>User</th></tr></thead>
-                <tbody id ='htmlTbody'>
-                </tbody>
-            </table>
-            <button class="btn" id="deleteBtn" onclick="deleteUser()">삭제</button>
-            <button class="returnBtn" onclick="returnToLogin()">Return</button>
+        <div id="container">
+            <div id="tableContainer">
+                <table>
+                    <thead><tr><th>User</th></tr></thead>
+                    <tbody id ='htmlTbody'>
+                    </tbody>
+                </table>
+            </div>
+            <div id="buttonContainer">
+                <button id="deleteBtn" onclick="deleteUser()">Delete</button>
+                <button id="HomenBtn" onclick="returnToHome()">Home</button>
+            </div>
         </div>
         <div class="col-lg-12" id="ex1_Result1" ></div> 
         <div class="col-lg-12" id="text" ></div> 

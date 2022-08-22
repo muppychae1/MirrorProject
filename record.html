@@ -1,0 +1,63 @@
+<html>
+    <head>
+        <title>Record Test</title>
+        <script>
+            const recorder = require('node-record-lpcm16')
+            const fs = require('fs')
+            
+            const file = fs.createWriteStream('test.wav', { encoding: 'binary' })
+            
+            const recording = recorder.record()
+            recording.stream().pipe(file)
+
+            const request = require('request')
+            
+            const witToken = process.env.WIT_TOKEN // get one from wit.ai!
+            
+            function parseResult (err, resp, body) {
+                if (err) console.error(err)
+                console.log(body)
+            }
+            
+            const recording = recorder.record({
+                recorder: 'arecord'
+            })
+            
+            recording
+            .stream()
+            .pipe(request.post({
+                'url': 'https://api.wit.ai/speech?client=chromium&lang=en-us&output=json',
+                'headers': {
+                'Accept': 'application/vnd.wit.20160202+json',
+                'Authorization': `Bearer ${witToken}`,
+                'Content-Type': 'audio/wav'
+                }
+            }, parseResult))
+            
+            setTimeout(() => {
+            recording.stop()
+            }, 3000) // Stop after three seconds of recording
+            
+            function recordStart(){
+                // const recording = recorder.record({
+                //     sampleRate: 44100
+                // })
+                // .stream()
+                // .pipe(file)
+
+                const recording = recorder.record()
+                recording.stream().pipe(file)
+
+                setTimeout(() => {
+                    recording.stop()
+                    console.log('stop')
+                }, 3000)
+            }
+            
+        </script>
+    </head>
+    <body>
+        <h1 style="color:white; text-align: center; margin-top: 15%;">Record</h1>
+        <button id="recordBtn" onclick="recordStart()">Record</button>
+    </body>
+</html>
